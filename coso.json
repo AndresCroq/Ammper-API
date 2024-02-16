@@ -1,0 +1,62 @@
+{
+  "id": "51eb7dd5-58fe-468f-930e-c34cd3b70aae",
+  "account": {
+    "id": "d4ab82ad-9b7c-4c99-9487-332ff0451b29",
+    "link": "7e1937c2-b86c-47a6-bf1b-dceeef1850f2",
+    "institution": {
+      "name": "erebor_mx_retail",
+      "type": "bank"
+    },
+    "created_at": "2024-02-16T17:41:31.388987Z",
+    "collected_at": "2024-02-16T17:41:26.698895Z",
+    "currency": "MXN",
+    "category": "CREDIT_CARD",
+    "type": "Cuentas de efectivo",
+    "number": "169",
+    "agency": "3814042",
+    "bank_product_id": "9067974",
+    "internal_identification": "8281086",
+    "public_identification_name": "CREDIT_CARD_NUMBER",
+    "public_identification_value": "593",
+    "credit_data": {
+      "collected_at": "2024-02-16T17:41:23.617257Z",
+      "credit_limit": 17552,
+      "cutting_date": "2024-03-05",
+      "next_payment_date": "2024-02-23",
+      "minimum_payment": 1130,
+      "monthly_payment": 6,
+      "no_interest_payment": 0,
+      "last_payment_date": "2024-02-02",
+      "last_period_balance": 0,
+      "interest_rate": 0
+    },
+    "loan_data": null,
+    "name": "Cartão crédito visa platinum",
+    "balance": {
+      "current": 47703.85,
+      "available": 47703.85
+    },
+    "last_accessed_at": "2024-02-15T06:24:53",
+    "balance_type": "LIABILITY"
+  },
+  "created_at": "2024-02-16T17:41:31.389004Z",
+  "category": "Bills & Utilities",
+  "subcategory": null,
+  "merchant": {
+    "name": "Tello y Delgado S. R.L. de C.V.",
+    "website": "https://www.telloydelgadosrldecv.com",
+    "logo": "https://www.telloydelgadosrldecv.com/logo.png"
+  },
+  "collected_at": "2024-02-16T17:41:29.027688Z",
+  "currency": "MXN",
+  "description": "RETIRO CON FICHA",
+  "internal_identification": "8dff7d5b",
+  "value_date": "2024-02-15",
+  "accounting_date": "2024-02-06T15:39:06",
+  "amount": 661.29,
+  "type": "OUTFLOW",
+  "status": "PENDING",
+  "reference": "8652",
+  "balance": 80514.12,
+  "observations": null
+}
