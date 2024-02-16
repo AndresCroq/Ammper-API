@@ -3,6 +3,7 @@ import { BankService } from './bank.service';
 import { BankController } from './bank.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Bank, BankSchema } from './schemas/bank.schema';
+import { FormatterService } from './formatter.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { Bank, BankSchema } from './schemas/bank.schema';
     ]),
   ],
   controllers: [BankController],
-  providers: [BankService],
+  providers: [BankService, FormatterService],
 })
 export class BankModule {}
