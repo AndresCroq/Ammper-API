@@ -1,6 +1,8 @@
 # compiled output
 /dist
 /node_modules
+bun.lockb
+package-lock.json
 
 # Logs
 logs
