@@ -2,7 +2,8 @@
 /dist
 /node_modules
 .env
-.coso.json
+data.json
+charts.json
 bun.lockb
 package-lock.json
 
