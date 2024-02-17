@@ -56,18 +56,32 @@ export class ApiConnectionService {
    * @param password password not required
    */
   async generateLink(institution: string, username: string, password?: string) {
-    const body = JSON.stringify({
-      access_mode: 'recurrent',
-      institution,
-      password,
-      username,
-    });
-    return (
-      await this.httpService.axiosRef.post(
-        `${this.belvoSandboxLink}/links`,
-        body,
-      )
-    ).data;
+    try {
+      const body = JSON.stringify({
+        access_mode: 'recurrent',
+        institution,
+        password,
+        username,
+      });
+      console.log('pre');
+      const expandedOptions = {
+        headers: {
+          ...this.options.headers,
+          'content-type': 'application/json',
+        },
+      };
+      const response = (
+        await this.httpService.axiosRef.post(
+          `${this.belvoSandboxLink}/links`,
+          body,
+          expandedOptions,
+        )
+      ).data;
+      return response;
+    } catch (error) {
+      console.log('error', error.response.data, 'error');
+      throw new Error(error);
+    }
   }
 
   /**
@@ -131,7 +145,6 @@ export class ApiConnectionService {
           )
         ).data;
       }
-      console.log(link.id);
       const response = (
         await this.httpService.axiosRef.get(
           `${this.belvoSandboxLink}/transactions/`,
