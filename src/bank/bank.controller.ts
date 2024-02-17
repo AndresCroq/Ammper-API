@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseInterceptors,
@@ -12,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { BankService } from './bank.service';
 import { CreateBankDto } from './dto/create-bank.dto';
-import { UpdateBankDto } from './dto/update-bank.dto';
 import { BankInterceptor } from './bank.interceptor';
+import { BankTable } from './interfaces/raw.interface';
 
 @Controller('bank')
 export class BankController {
@@ -26,19 +25,17 @@ export class BankController {
 
   @UseInterceptors(BankInterceptor)
   @Get()
-  findAll(@Query() { limit, skip }: { limit: string; skip: string }) {
+  findAll(
+    @Query() { limit, skip }: { limit: string; skip: string },
+    @Body() body: Partial<BankTable>,
+  ) {
     if (!limit || !skip) throw new BadRequestException('Agregar limit y skip.');
-    return this.bankService.findAll(+limit, +skip);
+    return this.bankService.findAll(+limit, +skip, body);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.bankService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBankDto: UpdateBankDto) {
-    return this.bankService.update(+id, updateBankDto);
   }
 
   @Delete(':id')
