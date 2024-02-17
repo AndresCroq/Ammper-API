@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { BankModule } from './bank/bank.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ApiConnectionModule } from './api_connection/api_connection.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
       }),
     }),
     BankModule,
+    ApiConnectionModule,
     AuthModule,
   ],
   controllers: [AppController],

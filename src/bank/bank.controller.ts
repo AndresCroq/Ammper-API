@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { BankService } from './bank.service';
 import { CreateBankDto } from './dto/create-bank.dto';
@@ -24,8 +26,9 @@ export class BankController {
 
   @UseInterceptors(BankInterceptor)
   @Get()
-  findAll() {
-    return this.bankService.findAll();
+  findAll(@Query() { limit, skip }: { limit: string; skip: string }) {
+    if (!limit || !skip) throw new BadRequestException('Agregar limit y skip.');
+    return this.bankService.findAll(+limit, +skip);
   }
 
   @Get(':id')
