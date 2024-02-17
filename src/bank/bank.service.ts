@@ -15,8 +15,8 @@ export class BankService {
     return await this.bankModel.create(createBankDto);
   }
 
-  findAll() {
-    return this.bankModel.find();
+  async findAll(limit: number, skip: number) {
+    return await this.bankModel.find().limit(limit).skip(skip);
   }
 
   async findOne(id: string) {
