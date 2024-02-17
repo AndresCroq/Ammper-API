@@ -41,6 +41,11 @@ export class BankService {
     }
     if (filters.valueDate) {
       filters['value_date'] = filters.valueDate;
+      const date = new Date(filters.valueDate);
+
+      filters['value_date'] = {
+        $gte: date.toISOString().split('T')[0],
+      };
       delete filters.valueDate;
     }
 

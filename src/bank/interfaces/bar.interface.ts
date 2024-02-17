@@ -19,6 +19,7 @@ export interface Legend {
 }
 
 export interface PlotOptions {
+  bar?: { pointWidth: number };
   series: PlotOptionsSeries;
 }
 

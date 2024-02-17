@@ -68,16 +68,18 @@ export class FormatterService {
   private bar(data: Bank[], flow = 'OUTFLOW'): Bar {
     const names = new Array(...new Set(data.map((e) => e.category)));
     const dates = new Array(...new Set(data.map((e) => e.value_date)));
+    const sortedDates = this.sortDates(dates);
+
     const series = names.map((name) => {
-      const amountsByIndex = new Array(dates.length).fill(0);
+      const amountsByIndex: number[] = new Array(sortedDates.length).fill(0);
       data
         .filter((e) => e.category === name && e.type === flow && e.amount > 0)
         .map(({ value_date, amount }) => {
-          const dateIndex = dates.indexOf(value_date);
+          const dateIndex = sortedDates.indexOf(value_date);
           amountsByIndex[dateIndex] = amountsByIndex[dateIndex] += amount * 100;
         });
 
-      const amountFloats = amountsByIndex.map((e) => (e > 0 ? e / 100 : e));
+      const amountFloats = amountsByIndex.map((e) => (e > 0 ? e / 100 : null));
       return {
         name: name ? name : 'Others',
         data: amountFloats,
@@ -91,13 +93,16 @@ export class FormatterService {
           flow === 'OUTFLOW' ? 'Expenses by category' : 'Incomes by category',
       },
       xAxis: {
-        categories: new Array(...new Set(data.map((e) => e.value_date))),
+        categories: sortedDates,
       },
       yAxis: {
         min: 0,
         title: { text: 'Expenses' },
       },
       plotOptions: {
+        bar: {
+          pointWidth: 20,
+        },
         series: {
           stacking: 'normal',
           dataLabels: { enabled: true },
@@ -136,5 +141,13 @@ export class FormatterService {
     });
 
     return data;
+  }
+
+  private sortDates(data: string[]) {
+    const sorted = data.sort(
+      (a, b) => new Date(b).getTime() - new Date(a).getTime(),
+    );
+
+    return sorted;
   }
 }
