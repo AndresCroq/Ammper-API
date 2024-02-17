@@ -13,13 +13,13 @@ export class BankInterceptor implements NestInterceptor {
   constructor(private readonly formatterService: FormatterService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const { format }: { format: string } = context
+    const { format, flow }: { format: string; flow: string } = context
       .switchToHttp()
       .getRequest().query;
 
     return next.handle().pipe(
       map((data: Bank[]) => {
-        return this.formatterService.format(format, data);
+        return this.formatterService.format(format, data, flow);
       }),
     );
   }
