@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
 } from '@nestjs/common';
 import { BankService } from './bank.service';
 import { CreateBankDto } from './dto/create-bank.dto';
 import { UpdateBankDto } from './dto/update-bank.dto';
+import { BankInterceptor } from './bank.interceptor';
 
 @Controller('bank')
 export class BankController {
@@ -20,6 +22,7 @@ export class BankController {
     return this.bankService.create(createBankDto);
   }
 
+  @UseInterceptors(BankInterceptor)
   @Get()
   findAll() {
     return this.bankService.findAll();
@@ -27,7 +30,7 @@ export class BankController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.bankService.findOne(+id);
+    return this.bankService.findOne(id);
   }
 
   @Patch(':id')

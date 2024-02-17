@@ -16,11 +16,11 @@ export class BankService {
   }
 
   findAll() {
-    return `This action returns all bank`;
+    return this.bankModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} bank`;
+  async findOne(id: string) {
+    return await this.bankModel.findById(id);
   }
 
   update(id: number, updateBankDto: UpdateBankDto) {
