@@ -7,7 +7,7 @@ import { Response } from 'express';
 export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
-  @Post('actualización')
+  @Post()
   handleWebhook(@Body() payload: WebhookDTO, @Res() res: Response) {
     console.log(payload);
     if (payload) {
