@@ -1,4 +1,4 @@
-export type ScatterVector = [string, number];
+export type ScatterVector = [number, number];
 
 export interface scatterSeries {
   name: string;
