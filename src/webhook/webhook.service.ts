@@ -49,7 +49,7 @@ export class WebhookService {
       mm: (date.getMonth() + 1).toString().padStart(2, '0'),
       yyyy: date.getFullYear(),
     };
-    return format.replace(/dd|mm|yyy/gi, (matched) => map[matched]);
+    return format.replace(/dd|mm|yyyy/gi, (matched) => map[matched]);
   }
 
   private async updateNotification(date: string) {
