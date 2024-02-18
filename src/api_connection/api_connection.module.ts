@@ -3,10 +3,13 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ApiConnectionService } from './api_connection.service';
 import { ApiConnectionController } from './api_connection.controller';
+import { BankService } from 'src/bank/bank.service';
+import { BankModule } from 'src/bank/bank.module';
 
 @Module({
-  imports: [ConfigModule, HttpModule],
-  providers: [ApiConnectionService],
+  imports: [BankModule, ConfigModule, HttpModule],
+  providers: [ApiConnectionService, BankService],
   controllers: [ApiConnectionController],
+  exports: [ApiConnectionService],
 })
 export class ApiConnectionModule {}
