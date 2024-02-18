@@ -16,7 +16,7 @@ export class FormatterService {
       case 'bar':
         return this.bar(data, flow);
       case 'scatter':
-        return this.scatter(data, flow);
+        return this.scatter(data);
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
@@ -44,15 +44,15 @@ export class FormatterService {
     return tableValues;
   }
 
-  private scatter(data: Bank[], flow: string) {
+  private scatter(data: Bank[]) {
     const names = new Array(...new Set(data.map((e) => e.category)));
     const series = this.scatterSeries(names);
 
     names.forEach((category) => {
       const temp: ScatterVector[] = [];
       data.forEach((e) => {
-        if (e.category === category && e.type === flow) {
-          temp.push([e.value_date, e.amount]);
+        if (e.category === category) {
+          temp.push([new Date(e.value_date).getTime(), e.amount]);
         }
       });
 
