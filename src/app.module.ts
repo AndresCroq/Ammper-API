@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ApiConnectionModule } from './api_connection/api_connection.module';
 import { AuthModule } from './auth/auth.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { AuthModule } from './auth/auth.module';
     BankModule,
     ApiConnectionModule,
     AuthModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],
