@@ -23,10 +23,10 @@ export class FiltersService {
         category: updateFilterDto?.category,
         merchantName: updateFilterDto?.merchant?.name,
         valueDate: updateFilterDto?.value_date,
-        amount: updateFilterDto?.amount,
+        amount: Math.floor(updateFilterDto?.amount),
         type: updateFilterDto?.type,
         status: updateFilterDto?.status,
-        balance: updateFilterDto?.balance,
+        balance: Math.floor(updateFilterDto?.balance),
       },
     });
   }
