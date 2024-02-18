@@ -11,7 +11,7 @@ export class FormatterService {
     @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
   ) {}
 
-  format(method: string, data: Bank[], flow?: string) {
+  format(method: string, data: Bank[], flow?: string, count?: number) {
     switch (method) {
       case 'bar':
         return this.bar(data, flow);
@@ -20,7 +20,7 @@ export class FormatterService {
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
-        return this.table(data);
+        return { banks: this.table(data), count };
       case 'raw':
         return data;
       default:
@@ -30,6 +30,7 @@ export class FormatterService {
 
   private table(data: Bank[]): BankTable[] {
     const tableValues: BankTable[] = data.map((e) => ({
+      _id: e._id,
       category: e.category ? e.category : 'Others',
       accountCategory: e.account.category,
       merchantName: e.merchant.name,

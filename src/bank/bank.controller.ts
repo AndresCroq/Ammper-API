@@ -18,12 +18,15 @@ export class BankController {
   constructor(private readonly bankService: BankService) {}
   @UseInterceptors(BankInterceptor)
   @Post()
-  findAll(
+  async findAll(
     @Query() { limit, skip }: { limit: string; skip: string },
     @Body() body: Partial<BankTable>,
   ) {
     if (!limit || !skip) throw new BadRequestException('Agregar limit y skip.');
-    return this.bankService.findAll(+limit, +skip, body);
+    const count = await this.bankService.count(body);
+    const banks = await this.bankService.findAll(+limit, +skip, body);
+
+    return { count, banks };
   }
 
   @Get(':id')

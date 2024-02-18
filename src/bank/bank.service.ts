@@ -27,6 +27,7 @@ export class BankService {
         .limit(limit)
         .skip(skip);
     }
+
     return await this.bankModel.find().limit(limit).skip(skip);
   }
 
@@ -54,6 +55,10 @@ export class BankService {
 
   async findOne(id: string) {
     return await this.bankModel.findById(id);
+  }
+
+  async count({ ...filters }: Partial<FormattedFilters>) {
+    return await this.bankModel.countDocuments(filters).exec();
   }
 
   remove(id: number) {
