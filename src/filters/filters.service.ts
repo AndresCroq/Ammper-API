@@ -30,4 +30,8 @@ export class FiltersService {
       },
     });
   }
+
+  async findOne() {
+    return await this.filterModel.findOne();
+  }
 }
