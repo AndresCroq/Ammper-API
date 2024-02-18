@@ -1,17 +1,14 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { Bank } from './schemas/bank.schema';
-import { Model } from 'mongoose';
 import { Bar, ScatterVector, scatterSeries } from './interfaces';
 import { BankTable } from './interfaces/raw.interface';
+import { FiltersService } from 'src/filters/filters.service';
 
 @Injectable()
 export class FormatterService {
-  constructor(
-    @InjectModel(Bank.name) private readonly bankModel: Model<Bank>,
-  ) {}
+  constructor(private readonly filtersService: FiltersService) {}
 
-  format(method: string, data: Bank[], flow?: string, count?: number) {
+  async format(method: string, data: Bank[], flow?: string, count?: number) {
     switch (method) {
       case 'bar':
         return this.bar(data, flow);
@@ -20,7 +17,8 @@ export class FormatterService {
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
-        return { banks: this.table(data), count };
+        const filters = await this.filtersService.findOne();
+        return { banks: this.table(data), count, filters };
       case 'raw':
         return data;
       default:
