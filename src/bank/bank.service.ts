@@ -27,6 +27,7 @@ export class BankService {
         .limit(limit)
         .skip(skip);
     }
+
     return await this.bankModel.find().limit(limit).skip(skip);
   }
 
@@ -41,6 +42,11 @@ export class BankService {
     }
     if (filters.valueDate) {
       filters['value_date'] = filters.valueDate;
+      const date = new Date(filters.valueDate);
+
+      filters['value_date'] = {
+        $gte: date.toISOString().split('T')[0],
+      };
       delete filters.valueDate;
     }
 
@@ -49,6 +55,10 @@ export class BankService {
 
   async findOne(id: string) {
     return await this.bankModel.findById(id);
+  }
+
+  async count({ ...filters }: Partial<FormattedFilters>) {
+    return await this.bankModel.countDocuments(filters).exec();
   }
 
   remove(id: number) {

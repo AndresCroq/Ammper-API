@@ -1,4 +1,5 @@
 export interface BankTable {
+  _id: string;
   category: string | null;
   accountCategory: string;
   merchantName: string;
