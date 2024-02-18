@@ -20,18 +20,10 @@ export class BankService {
   }
 
   async findAll(limit: number, skip: number, filters?: Partial<BankTable>) {
-    if (filters) {
-      const formattedFilters = this.formatFilters(filters);
-      return await this.bankModel
-        .find(formattedFilters)
-        .limit(limit)
-        .skip(skip);
-    }
-
-    return await this.bankModel.find().limit(limit).skip(skip);
+    return await this.bankModel.find(filters).limit(limit).skip(skip);
   }
 
-  private formatFilters(filters: Partial<FormattedFilters>) {
+  formatFilters(filters: Partial<FormattedFilters>) {
     if (filters.accountCategory) {
       filters['account.category'] = filters.accountCategory;
       delete filters.accountCategory;

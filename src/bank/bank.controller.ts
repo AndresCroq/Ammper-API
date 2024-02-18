@@ -23,8 +23,9 @@ export class BankController {
     @Body() body: Partial<BankTable>,
   ) {
     if (!limit || !skip) throw new BadRequestException('Agregar limit y skip.');
-    const count = await this.bankService.count(body);
-    const banks = await this.bankService.findAll(+limit, +skip, body);
+    const filters = this.bankService.formatFilters(body);
+    const count = await this.bankService.count(filters);
+    const banks = await this.bankService.findAll(+limit, +skip, filters);
 
     return { count, banks };
   }
