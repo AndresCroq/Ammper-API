@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ApiConnectionModule } from './api_connection/api_connection.module';
 import { AuthModule } from './auth/auth.module';
 import { FiltersModule } from './filters/filters.module';
+import { WebhookModule } from './webhook/webhook.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { FiltersModule } from './filters/filters.module';
     ApiConnectionModule,
     AuthModule,
     FiltersModule,
+    WebhookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

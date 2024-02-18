@@ -16,5 +16,6 @@ import { FormatterService } from './formatter.service';
   ],
   controllers: [BankController],
   providers: [BankService, FormatterService],
+  exports: [BankService, MongooseModule],
 })
 export class BankModule {}
