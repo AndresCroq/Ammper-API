@@ -1,15 +1,19 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { WebhookDTO } from './webhook.dto';
+import { WebhookService } from './webhook.service';
+import { Response } from 'express';
 
 @Controller('webhook')
 export class WebhookController {
+  constructor(private readonly webhookService: WebhookService) {}
+
   @Post('actualización')
-  handleWebhook(@Body() payload: WebhookDTO) {
+  handleWebhook(@Body() payload: WebhookDTO, @Res() res: Response) {
     console.log(payload);
-    if (payload.webhook_type !== 'TRANSACTIONS') {
-      return;
+    if (payload) {
+      res.sendStatus(200);
     }
-    //Acá tendría que meter la función o la logica que va a actualizar la base de datos
-    //
+    if (payload.webhook_type === 'TRANSACTIONS')
+      this.webhookService.updateDatabase(payload);
   }
 }
