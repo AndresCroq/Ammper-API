@@ -1,6 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { FiltersService } from './filters.service';
 import { Filter } from './schemas/filters.schema';
+// import { Bank } from 'src/bank/schemas/bank.schema';
 
 @Controller('filters')
 export class FiltersController {
@@ -12,7 +13,7 @@ export class FiltersController {
   }
 
   // @Patch()
-  // update(@Body() updateFilterDto: UpdateFilterDto) {
+  // update(@Body() updateFilterDto: Partial<Bank>) {
   //   return this.filtersService.update(updateFilterDto);
   // }
 }
