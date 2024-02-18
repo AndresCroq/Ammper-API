@@ -18,8 +18,8 @@ export class BankInterceptor implements NestInterceptor {
       .getRequest().query;
 
     return next.handle().pipe(
-      map((data: Bank[]) => {
-        return this.formatterService.format(format, data, flow);
+      map(({ count, banks }: { banks: Bank[]; count: number }) => {
+        return this.formatterService.format(format, banks, flow, count);
       }),
     );
   }
