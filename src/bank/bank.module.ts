@@ -4,9 +4,11 @@ import { BankController } from './bank.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Bank, BankSchema } from './schemas/bank.schema';
 import { FormatterService } from './formatter.service';
+import { FiltersModule } from 'src/filters/filters.module';
 
 @Module({
   imports: [
+    FiltersModule,
     MongooseModule.forFeature([
       {
         name: Bank.name,
