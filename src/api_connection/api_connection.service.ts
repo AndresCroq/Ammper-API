@@ -2,10 +2,14 @@ import { HttpService } from '@nestjs/axios';
 import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ILink } from './interfaces/link.interface';
+import { BankService } from 'src/bank/bank.service';
+import { Bank } from 'src/bank/interfaces/bank.interface';
 
 @Injectable()
 export class ApiConnectionService {
   constructor(
+    @Inject(forwardRef(() => BankService))
+    private readonly bankService: BankService,
     private readonly httpService: HttpService,
     @Inject(forwardRef(() => ConfigService))
     private configService: ConfigService,
@@ -103,14 +107,20 @@ export class ApiConnectionService {
   /* Obtain users needed to generate a link */
   async getUsers() {}
 
+  /**
+   * This method checks if the link between an institution and it's user already exists
+   *
+   * @param institution String
+   * @returns The link structure
+   */
   async checkLinkExistence(institution: string): Promise<ILink> {
     return (await this.getAllLinks()).results.find(
       (link: ILink) => institution === link.institution,
     );
   }
 
-  /* Obtain Transactions (can be filtered to date) */
   /**
+   * Obtain Transactions (can be filtered to date)
    *
    * @param institution
    * @param username
@@ -152,6 +162,32 @@ export class ApiConnectionService {
         )
       ).data;
       return response;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  /**
+   * This method should update the Database
+   * It was created to update de DB after a Webhook notification.
+   *
+   * @param link_id
+   * @param notifDate Actual Date
+   * @param lastNotifDate Last Date. Get it from DB
+   */
+  async updateDB(linkId: string, notifDate: string, lastNotifDate: string) {
+    try {
+      const data = (
+        await this.httpService.axiosRef.get(
+          `${this.belvoSandboxLink}/transactions/?link=${linkId}&created_at__range=${lastNotifDate},${notifDate}`,
+          this.options,
+        )
+      ).data;
+      /* Execute the "create" method for banks */
+      data.results.forEach(async (transaction: Bank) => {
+        await this.bankService.create(transaction);
+      });
+      return true;
     } catch (error) {
       throw new Error(error);
     }
