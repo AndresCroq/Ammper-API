@@ -26,6 +26,7 @@ export class BankService {
   }
 
   formatFilters(filters: Partial<FormattedFilters>) {
+    filters.amount = { $lte: 1000 } as unknown as number;
     if (filters.accountCategory) {
       filters['account.category'] = filters.accountCategory;
       delete filters.accountCategory;
