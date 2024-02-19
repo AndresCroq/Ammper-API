@@ -18,6 +18,7 @@ export class FormatterService {
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
         const filters = await this.filtersService.findOne();
+        filters.valueDate = this.sortDates(filters.valueDate);
         return { banks: this.table(data), count, filters };
       case 'raw':
         return data;
