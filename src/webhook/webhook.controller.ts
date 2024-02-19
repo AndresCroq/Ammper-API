@@ -9,7 +9,6 @@ export class WebhookController {
 
   @Post()
   handleWebhook(@Body() payload: WebhookDTO, @Res() res: Response) {
-    console.log(payload);
     if (payload) {
       res.sendStatus(200);
     }

@@ -4,10 +4,13 @@ import { ConfigService } from '@nestjs/config';
 import { ILink } from './interfaces/link.interface';
 import { BankService } from 'src/bank/bank.service';
 import { Bank } from 'src/bank/interfaces/bank.interface';
+import { FiltersService } from 'src/filters/filters.service';
 
 @Injectable()
 export class ApiConnectionService {
   constructor(
+    @Inject(forwardRef(() => FiltersService))
+    private readonly filterService: FiltersService,
     @Inject(forwardRef(() => BankService))
     private readonly bankService: BankService,
     private readonly httpService: HttpService,
@@ -67,7 +70,6 @@ export class ApiConnectionService {
         password,
         username,
       });
-      console.log('pre');
       const expandedOptions = {
         headers: {
           ...this.options.headers,
@@ -103,9 +105,6 @@ export class ApiConnectionService {
       )
     ).data;
   }
-
-  /* Obtain users needed to generate a link */
-  async getUsers() {}
 
   /**
    * This method checks if the link between an institution and it's user already exists
@@ -183,9 +182,9 @@ export class ApiConnectionService {
           this.options,
         )
       ).data;
-      /* Execute the "create" method for banks */
       data.results.forEach(async (transaction: Bank) => {
         await this.bankService.create(transaction);
+        await this.filterService.update(transaction);
       });
       return true;
     } catch (error) {

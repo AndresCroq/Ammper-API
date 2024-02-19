@@ -8,11 +8,9 @@ export class ApiConnectionController {
   @Get('/institutions')
   async getInstitutions(): Promise<any> {
     const info = await this.apiConnectionService.getAllLinks();
-    console.log(info);
     return info;
   }
 
-  //La ruta post ésta, está mal.
   @Post('/genLink')
   async generateLink(@Body() linkGen: LinkGenDTO): Promise<any> {
     const linkInfo = await this.apiConnectionService.generateLink(
@@ -33,10 +31,14 @@ export class ApiConnectionController {
         data.date_from,
         data.date_to,
       );
-      console.log(info);
       return info;
     } catch (error) {
       throw new Error(error);
     }
   }
+
+  /* @Put('/updateTransactions')
+  async updateTransactions(@Body() data: any) {
+    this.apiConnectionService.updateDB
+  } */
 }
