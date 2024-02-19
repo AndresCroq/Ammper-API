@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post /* , Put */ } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { ApiConnectionService } from './api_connection.service';
 import { LinkGenDTO, transactionsDTO } from './dto/linkInfo.dto';
 
@@ -43,9 +43,9 @@ export class ApiConnectionController {
     }
   }
 
-  /*   @Put('/updateTransactions')
-  async updateTransactions(@Body() data: any) {
-    this.apiConnectionService.updateDB('string', 'string', 'string');
-    console.log(data);
-  } */
+  @Put('/updateTransactions')
+  async updateTransactions() {
+    await this.apiConnectionService.updateAllTransactions();
+    return 'Job Done';
+  }
 }
