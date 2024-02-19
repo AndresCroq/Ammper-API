@@ -8,12 +8,18 @@ import { FiltersService } from 'src/filters/filters.service';
 export class FormatterService {
   constructor(private readonly filtersService: FiltersService) {}
 
-  async format(method: string, data: Bank[], flow?: string, count?: number) {
+  async format(
+    method: string,
+    data: Bank[],
+    month?: string,
+    flow?: string,
+    count?: number,
+  ) {
     switch (method) {
       case 'bar':
-        return this.bar(data, flow);
+        return this.bar(data, flow, month);
       case 'scatter':
-        return this.scatter(data);
+        return this.scatter(data, month);
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
@@ -43,7 +49,7 @@ export class FormatterService {
     return tableValues;
   }
 
-  private scatter(data: Bank[]) {
+  private scatter(data: Bank[], month?: string) {
     const names = new Array(...new Set(data.map((e) => e.category)));
     const series = this.scatterSeries(names);
 
@@ -51,7 +57,12 @@ export class FormatterService {
       const temp: ScatterVector[] = [];
       data.forEach((e) => {
         if (e.category === category) {
-          temp.push([new Date(e.value_date).getTime(), e.amount]);
+          let date: number;
+
+          if (!month) date = new Date(e.value_date).getTime();
+          else date = new Date(this.monthlyDate(e.value_date)).getTime();
+
+          temp.push([date, e.amount]);
         }
       });
 
@@ -65,9 +76,17 @@ export class FormatterService {
     return series;
   }
 
-  private bar(data: Bank[], flow = 'OUTFLOW'): Bar {
+  private bar(data: Bank[], flow = 'OUTFLOW', month?: string): Bar {
     const names = new Array(...new Set(data.map((e) => e.category)));
-    const dates = new Array(...new Set(data.map((e) => e.value_date)));
+    let dates: string[];
+
+    if (!month) {
+      dates = new Array(...new Set(data.map((e) => e.value_date)));
+    } else
+      dates = new Array(
+        ...new Set(data.map((e) => this.monthlyDate(e.value_date))),
+      );
+
     const sortedDates = this.sortDates(dates);
 
     const series = names.map((name) => {
@@ -75,7 +94,9 @@ export class FormatterService {
       data
         .filter((e) => e.category === name && e.type === flow && e.amount > 0)
         .map(({ value_date, amount }) => {
-          const dateIndex = sortedDates.indexOf(value_date);
+          let dateIndex: number;
+          if (!month) dateIndex = sortedDates.indexOf(value_date);
+          else dateIndex = sortedDates.indexOf(this.monthlyDate(value_date));
           amountsByIndex[dateIndex] = amountsByIndex[dateIndex] += amount * 100;
         });
 
@@ -149,5 +170,9 @@ export class FormatterService {
     );
 
     return sorted;
+  }
+
+  private monthlyDate(date?: string) {
+    return date?.split('-').slice(0, 2).join('-');
   }
 }
