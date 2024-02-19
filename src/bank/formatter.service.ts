@@ -20,6 +20,8 @@ export class FormatterService {
         return this.bar(data, flow, month);
       case 'scatter':
         return this.scatter(data, month);
+      case 'averages':
+        return this.averages(data);
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
@@ -31,6 +33,63 @@ export class FormatterService {
       default:
         throw new BadRequestException('Wrong formatting method.');
     }
+  }
+
+  private averages(data: Bank[]) {
+    const sortedData = this.sortAverages(data);
+
+    return sortedData;
+  }
+
+  private sortAverages(data: Bank[]) {
+    const sortedData = data.sort(
+      (a, b) =>
+        new Date(a.value_date).getTime() - new Date(b.value_date).getTime(),
+    );
+
+    const chartData: {
+      date: number;
+      median: number;
+      mode: number;
+      mean: number;
+    }[] = [];
+
+    let currentDate = new Date(sortedData[0]?.value_date).getTime();
+    let count = 0;
+
+    for (let i = 0; i < sortedData.length; i++) {
+      const date = new Date(sortedData[i].value_date).getTime();
+
+      if (date === currentDate) {
+        count++;
+      } else {
+        if (count > 0) {
+          const amounts = Array.from(
+            { length: count },
+            (_, index) => sortedData[i - count + index].amount,
+          );
+          const { mean, mode, median } = this.calculateStatistics(amounts);
+
+          chartData.push({ date: currentDate, mean, mode, median });
+        }
+
+        currentDate = date;
+        count = 1;
+      }
+    }
+
+    if (count > 0) {
+      const amounts = Array.from(
+        { length: count },
+        (_, index) => sortedData[sortedData.length - count + index].amount,
+      );
+
+      const { mean, mode, median } = this.calculateStatistics(amounts);
+
+      chartData.push({ date: currentDate, mean, mode, median });
+    }
+
+    return chartData;
   }
 
   private table(data: Bank[]): BankTable[] {
@@ -184,5 +243,44 @@ export class FormatterService {
 
   private monthlyDate(date?: string) {
     return date?.split('-').slice(0, 2).join('-');
+  }
+
+  private calculateStatistics(arr: number[]): {
+    mean: number;
+    mode: number | null;
+    median: number | null;
+  } {
+    // Calculate mean
+    const mean = arr.reduce((acc, val) => acc + val, 0) / arr.length;
+
+    const roundedMean = Number(mean.toFixed(2));
+
+    // Calculate mode
+    const frequency: { [key: number]: number } = {};
+    arr.forEach((num) => {
+      frequency[num] = (frequency[num] || 0) + 1;
+    });
+
+    let mode: number | null = null;
+    let maxFrequency = 0;
+    for (const num in frequency) {
+      const freq = frequency[num];
+      if (freq > maxFrequency) {
+        mode = Number(num);
+        maxFrequency = freq;
+      }
+    }
+
+    // Calculate median
+    const sortedArr = arr.slice().sort((a, b) => a - b);
+    const mid = Math.floor(sortedArr.length / 2);
+    const median =
+      sortedArr.length % 2 === 0
+        ? (sortedArr[mid - 1] + sortedArr[mid]) / 2
+        : sortedArr[mid];
+
+    const roundedMedian = Number(median.toFixed(2));
+
+    return { mean: roundedMean, mode, median: roundedMedian };
   }
 }
