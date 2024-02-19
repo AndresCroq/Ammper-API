@@ -1,11 +1,14 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { ApiConnectionService } from './api_connection.service';
 import { LinkGenDTO, transactionsDTO } from './dto/linkInfo.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('api-connection')
 export class ApiConnectionController {
   constructor(private readonly apiConnectionService: ApiConnectionService) {}
   @Get('/institutions')
+  @ApiOperation({ summary: 'Obtain all institutions existing on belvo' })
+  @ApiResponse({})
   async getInstitutions(): Promise<any> {
     const info = await this.apiConnectionService.getInstitutions();
     return info;
