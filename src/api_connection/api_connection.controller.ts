@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post /* , Put */ } from '@nestjs/common';
 import { ApiConnectionService } from './api_connection.service';
 import { LinkGenDTO, transactionsDTO } from './dto/linkInfo.dto';
 
@@ -7,6 +7,12 @@ export class ApiConnectionController {
   constructor(private readonly apiConnectionService: ApiConnectionService) {}
   @Get('/institutions')
   async getInstitutions(): Promise<any> {
+    const info = await this.apiConnectionService.getInstitutions();
+    return info;
+  }
+
+  @Get('/allLinks')
+  async getAllLinks() {
     const info = await this.apiConnectionService.getAllLinks();
     return info;
   }
@@ -37,8 +43,9 @@ export class ApiConnectionController {
     }
   }
 
-  /* @Put('/updateTransactions')
+  /*   @Put('/updateTransactions')
   async updateTransactions(@Body() data: any) {
-    this.apiConnectionService.updateDB
+    this.apiConnectionService.updateDB('string', 'string', 'string');
+    console.log(data);
   } */
 }
