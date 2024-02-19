@@ -13,9 +13,9 @@ export class ApiConnectionService {
     private readonly filterService: FiltersService,
     @Inject(forwardRef(() => BankService))
     private readonly bankService: BankService,
-    private readonly httpService: HttpService,
     @Inject(forwardRef(() => ConfigService))
     private configService: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
   private belvoSandboxLink =
     this.configService.get<string>('BELVO_SANBOX_LINK');
