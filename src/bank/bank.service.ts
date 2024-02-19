@@ -7,6 +7,8 @@ import { BankTable } from './interfaces/raw.interface';
 
 interface FormattedFilters extends Partial<BankTable> {
   ['account.category']: string;
+  ['fromDate']: string;
+  ['toDate']: string;
 }
 
 @Injectable()
@@ -32,14 +34,35 @@ export class BankService {
       filters['merchant.name'] = filters.merchantName;
       delete filters.merchantName;
     }
-    if (filters.valueDate) {
-      filters['value_date'] = filters.valueDate;
-      const date = new Date(filters.valueDate);
+
+    if (filters.fromDate && !filters.toDate) {
+      const date = new Date(filters.fromDate);
 
       filters['value_date'] = {
         $gte: date.toISOString().split('T')[0],
       };
-      delete filters.valueDate;
+
+      delete filters.fromDate;
+    }
+    if (filters.toDate && !filters.fromDate) {
+      const date = new Date(filters.toDate);
+
+      filters['value_date'] = {
+        $lte: date.toISOString().split('T')[0],
+      };
+      delete filters.toDate;
+    }
+    if (filters.toDate && filters.fromDate) {
+      const firstDate = new Date(filters.fromDate);
+      const date = new Date(filters.toDate);
+
+      filters['value_date'] = {
+        $gte: firstDate.toISOString().split('T')[0],
+        $lte: date.toISOString().split('T')[0],
+      };
+
+      delete filters.fromDate;
+      delete filters.toDate;
     }
 
     return filters;
