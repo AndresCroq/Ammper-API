@@ -4,15 +4,18 @@ import { ConfigService } from '@nestjs/config';
 import { ILink } from './interfaces/link.interface';
 import { BankService } from 'src/bank/bank.service';
 import { Bank } from 'src/bank/interfaces/bank.interface';
+import { FiltersService } from 'src/filters/filters.service';
 
 @Injectable()
 export class ApiConnectionService {
   constructor(
+    @Inject(forwardRef(() => FiltersService))
+    private readonly filterService: FiltersService,
     @Inject(forwardRef(() => BankService))
     private readonly bankService: BankService,
-    private readonly httpService: HttpService,
     @Inject(forwardRef(() => ConfigService))
     private configService: ConfigService,
+    private readonly httpService: HttpService,
   ) {}
   private belvoSandboxLink =
     this.configService.get<string>('BELVO_SANBOX_LINK');
@@ -67,7 +70,6 @@ export class ApiConnectionService {
         password,
         username,
       });
-      console.log('pre');
       const expandedOptions = {
         headers: {
           ...this.options.headers,
@@ -104,9 +106,6 @@ export class ApiConnectionService {
     ).data;
   }
 
-  /* Obtain users needed to generate a link */
-  async getUsers() {}
-
   /**
    * This method checks if the link between an institution and it's user already exists
    *
@@ -135,6 +134,7 @@ export class ApiConnectionService {
     password: string,
     date_from?: string,
     date_to?: string,
+    limit: number = 500,
   ) {
     try {
       let link = await this.checkLinkExistence(institution);
@@ -158,9 +158,25 @@ export class ApiConnectionService {
       const response = (
         await this.httpService.axiosRef.get(
           `${this.belvoSandboxLink}/transactions/`,
-          { ...this.options, params: { link: link.id } },
+          { ...this.options, params: { link: link.id, page_size: limit } },
         )
       ).data;
+      let flag = response.next;
+      let page = 2;
+      while (flag) {
+        const result = (
+          await this.httpService.axiosRef.get(
+            `${this.belvoSandboxLink}/transactions/`,
+            {
+              ...this.options,
+              params: { link: link.id, page_size: limit, page },
+            },
+          )
+        ).data;
+        response.results = [...response.results, ...result.results];
+        flag = result.next;
+        page++;
+      }
       return response;
     } catch (error) {
       throw new Error(error);
@@ -183,13 +199,58 @@ export class ApiConnectionService {
           this.options,
         )
       ).data;
-      /* Execute the "create" method for banks */
       data.results.forEach(async (transaction: Bank) => {
         await this.bankService.create(transaction);
+        await this.filterService.update(transaction);
       });
       return true;
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  /**
+   * This method is to update through a single route all the databse.
+   *
+   * @returns boolean
+   */
+  async updateAllTransactions() {
+    try {
+      const transactions = await this.getTransactions(
+        'erebor_mx_retail',
+        'bnk100',
+        'full',
+      );
+      const dbTransactions = await this.bankService.findAll(
+        transactions.results.length,
+        0,
+      );
+      const promiseT = transactions.results.map(async (el) => {
+        if (this.checkTransactionExistanse(el.id, dbTransactions)) {
+          return;
+        }
+        return await this.bankService.create(el);
+      });
+      await Promise.all(promiseT);
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  /**
+   * This method checks if the transactions exists on our database
+   *
+   * @param transaction_id string
+   * @param db_trasactions_array array
+   * @returns
+   */
+  private checkTransactionExistanse(
+    transaction_id: string,
+    db_trasactions_array,
+  ) {
+    if (db_trasactions_array.find((el: Bank) => el.id === transaction_id))
+      return true;
+    return false;
   }
 }
