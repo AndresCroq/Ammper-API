@@ -62,7 +62,17 @@ export class FormatterService {
           if (!month) date = new Date(e.value_date).getTime();
           else date = new Date(this.monthlyDate(e.value_date)).getTime();
 
-          temp.push([date, e.amount]);
+          const existingIndex = temp.findIndex(
+            ([existingDate]) => existingDate === date,
+          );
+
+          if (existingIndex !== -1) {
+            const existingAmount = temp[existingIndex][1];
+            const newAmount = (existingAmount * 100 + e.amount * 100) / 100;
+            temp[existingIndex][1] = newAmount;
+          } else {
+            temp.push([date, e.amount]);
+          }
         }
       });
 
