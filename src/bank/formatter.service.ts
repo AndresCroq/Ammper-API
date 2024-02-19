@@ -4,6 +4,8 @@ import { Bar, ScatterVector, scatterSeries } from './interfaces';
 import { BankTable } from './interfaces/raw.interface';
 import { FiltersService } from 'src/filters/filters.service';
 
+type BubbleData = { name: string; value: number };
+
 @Injectable()
 export class FormatterService {
   constructor(private readonly filtersService: FiltersService) {}
@@ -22,6 +24,8 @@ export class FormatterService {
         return this.scatter(data, month);
       case 'averages':
         return this.averages(data, month);
+      case 'bubble':
+        return this.bubble(data);
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
@@ -33,6 +37,26 @@ export class FormatterService {
       default:
         throw new BadRequestException('Wrong formatting method.');
     }
+  }
+
+  private bubble(data: Bank[]) {
+    const names = new Array(...new Set(data.map((e) => e.category)));
+    const series = names.map((name) => {
+      const info: BubbleData[] = [];
+
+      for (const { merchant, amount, category } of data) {
+        if (category !== name) continue;
+        if (!info.some((e) => e.name === merchant.name)) {
+          info.push({ name: merchant.name, value: amount });
+          continue;
+        }
+        const index = info.findIndex((e) => e.name === merchant.name);
+        info[index].value += amount;
+      }
+      return { name, data: info };
+    });
+
+    return { series };
   }
 
   private averages(data: Bank[], month?: string) {
