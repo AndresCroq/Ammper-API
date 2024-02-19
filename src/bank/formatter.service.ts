@@ -197,14 +197,16 @@ export class FormatterService {
       chart: { type: 'bar' },
       title: {
         text:
-          flow === 'OUTFLOW' ? 'Expenses by category' : 'Incomes by category',
+          flow === 'OUTFLOW'
+            ? 'Gastos por categorías'
+            : 'Ingresos por categoría',
       },
       xAxis: {
         categories: sortedDates,
       },
       yAxis: {
         min: 0,
-        title: { text: 'Expenses' },
+        title: { text: 'Movimientos' },
       },
       plotOptions: {
         bar: {
