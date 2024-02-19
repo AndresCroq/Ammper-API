@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { FiltersService } from './filters.service';
-import { FiltersController } from './filters.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Filter, FilterSchema } from './schemas/filters.schema';
 
@@ -13,7 +12,6 @@ import { Filter, FilterSchema } from './schemas/filters.schema';
       },
     ]),
   ],
-  controllers: [FiltersController],
   providers: [FiltersService],
   exports: [FiltersService, MongooseModule],
 })
