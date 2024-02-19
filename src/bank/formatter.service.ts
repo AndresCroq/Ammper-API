@@ -21,7 +21,7 @@ export class FormatterService {
       case 'scatter':
         return this.scatter(data, month);
       case 'averages':
-        return this.averages(data);
+        return this.averages(data, month);
       case 'custom':
         return new Array(...new Set(data.map((e) => e.account.category)));
       case 'table':
@@ -35,17 +35,26 @@ export class FormatterService {
     }
   }
 
-  private averages(data: Bank[]) {
-    const sortedData = this.sortAverages(data);
+  private averages(data: Bank[], month?: string) {
+    const sortedData = this.sortAverages(data, month);
 
     return sortedData;
   }
 
-  private sortAverages(data: Bank[]) {
-    const sortedData = data.sort(
-      (a, b) =>
-        new Date(a.value_date).getTime() - new Date(b.value_date).getTime(),
-    );
+  private sortAverages(data: Bank[], month?: string) {
+    let sortedData: Bank[];
+
+    if (month)
+      sortedData = data.sort(
+        (a, b) =>
+          new Date(this.monthlyDate(a.value_date)).getTime() -
+          new Date(this.monthlyDate(b.value_date)).getTime(),
+      );
+    else
+      sortedData = data.sort(
+        (a, b) =>
+          new Date(a.value_date).getTime() - new Date(b.value_date).getTime(),
+      );
 
     const chartData: {
       date: number;
@@ -54,11 +63,19 @@ export class FormatterService {
       mean: number;
     }[] = [];
 
-    let currentDate = new Date(sortedData[0]?.value_date).getTime();
+    let currentDate;
+    if (month)
+      currentDate = new Date(
+        this.monthlyDate(sortedData[0]?.value_date),
+      ).getTime();
+    if (!month) currentDate = new Date(sortedData[0]?.value_date).getTime();
     let count = 0;
 
     for (let i = 0; i < sortedData.length; i++) {
-      const date = new Date(sortedData[i].value_date).getTime();
+      let date;
+      if (!month) date = new Date(sortedData[i].value_date).getTime();
+      else
+        date = new Date(this.monthlyDate(sortedData[i].value_date)).getTime();
 
       if (date === currentDate) {
         count++;
