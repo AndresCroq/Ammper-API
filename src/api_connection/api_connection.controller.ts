@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { ApiConnectionService } from './api_connection.service';
 import { LinkGenDTO, transactionsDTO } from './dto/linkInfo.dto';
 
@@ -7,12 +7,16 @@ export class ApiConnectionController {
   constructor(private readonly apiConnectionService: ApiConnectionService) {}
   @Get('/institutions')
   async getInstitutions(): Promise<any> {
-    const info = await this.apiConnectionService.getAllLinks();
-    console.log(info);
+    const info = await this.apiConnectionService.getInstitutions();
     return info;
   }
 
-  //La ruta post ésta, está mal.
+  @Get('/allLinks')
+  async getAllLinks() {
+    const info = await this.apiConnectionService.getAllLinks();
+    return info;
+  }
+
   @Post('/genLink')
   async generateLink(@Body() linkGen: LinkGenDTO): Promise<any> {
     const linkInfo = await this.apiConnectionService.generateLink(
@@ -33,10 +37,15 @@ export class ApiConnectionController {
         data.date_from,
         data.date_to,
       );
-      console.log(info);
       return info;
     } catch (error) {
       throw new Error(error);
     }
+  }
+
+  @Put('/updateTransactions')
+  async updateTransactions() {
+    await this.apiConnectionService.updateAllTransactions();
+    return 'Job Done';
   }
 }

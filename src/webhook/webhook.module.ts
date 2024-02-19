@@ -9,6 +9,7 @@ import { BankService } from 'src/bank/bank.service';
 import { HttpModule } from '@nestjs/axios';
 import { ApiConnectionModule } from 'src/api_connection/api_connection.module';
 import { BankModule } from 'src/bank/bank.module';
+import { FiltersModule } from 'src/filters/filters.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BankModule } from 'src/bank/bank.module';
     ConfigModule,
     HttpModule,
     ApiConnectionModule,
+    FiltersModule,
   ],
   controllers: [WebhookController],
   providers: [BankService, WebhookService, ApiConnectionService],
